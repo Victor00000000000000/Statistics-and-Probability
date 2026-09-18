@@ -56,7 +56,7 @@ def monti_carlo_indiMed(G, arrVar, arrIncertezas, quantidade_experimentos):
 	arrResultadoRandomico = [0*quantidade_experimentos]
 	for i in range(quantidade_experimentos):
 		arrVarRandomicos[i] = random(arrVar[i]-arrIncertezas[i], arrVar[i]+arrIncertezas[i])
-		arrResultadoRandomico[i] = G(*arrVarRandomico)
+		arrResultadoRandomico[i] = G(*arrVarRandomicos)
 	mergeSort(arrResultadoRandomico, 0, len(arrResultadoRandomico))
 	gauss_distribut = gaussiana_creater(arrResultadoRandomico)
 	return gauss_distribut
@@ -69,8 +69,9 @@ if __name__ == "__main__":
 	arrVar=[25.3, 56.5]
 	arrIncertezasPadrao=[0.6, 0.8]
 	quantidade_experimentos=100
-	gauss = monti_carlo_IndiMed(arrVar, arrIncertezasPadrao, quantidade_experimentos)
+	gauss = monti_carlo_indiMed(arrVar, arrIncertezasPadrao, quantidade_experimentos)
 	plt.figure(1,2)
 	plt.plot(gauss.keys(), gauss.values())
-	plt.savefig("monti-carlo-result.png")
+    #plt.show()
+    #plt.savefig("monti-carlo-result.png")
 ## RESPOSTA: (1429 +- 39)mm
