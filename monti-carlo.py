@@ -1,90 +1,51 @@
 from random import random
+from numpy.random import normal
 import matplotlib.pyplot as plt
+import numpy as np
+from math import trunc, ceil
 
-def merge(arr, l, m, r):
-    n1 = m - l + 1
-    n2 = r - m
-
-    L = [0] * n1
-    R = [0] * n2
-
-    for i in range(n1):
-        L[i] = arr[l + i]
-    for j in range(n2):
-        R[j] = arr[m + 1 + j]
-
-    i = j = 0
-    k = l
-
-    while i < n1 and j < n2:
-        if L[i] <= R[j]:
-            arr[k] = L[i]
-            i += 1
-        else:
-            arr[k] = R[j]
-            j += 1
-        k += 1
-
-    while i < n1:
-        arr[k] = L[i]
-        i += 1
-        k += 1
-    while j < n2:
-        arr[k] = R[j]
-        j += 1
-        k += 1
-
-def mergeSort(arr, l, r):
-    if l < r:
-        m = l + (r - l) // 2
-        mergeSort(arr, l, m)
-        mergeSort(arr, m + 1, r)
-        merge(arr, l, m, r)
-
-def gaussiana_creater(arrValues):
-	gauss_dict = dict()
-	for i in range(len(arrValues)):
-		if arrValues[i] in gauss_dict.values():
-			gauss_dict[i] += 1
-		else:
-			gauss_dict[i] = 1
-
-	return gauss_dict
-
+def return_gaussiana(G, arrVar, arrIncertezas, quantidade_experimentos):
+    generatedG= monti_carlo_indiMed(G, arrVar, arrIncertezasPadrao, quantidade_experimentos)
+     
+    media = np.mean(generatedG)
+    desvio_padrao = np.std(generatedG)
+    xmed = (max(generatedG) + min(generatedG))/2
+     
+    fig = plt.figure(figsize=(6,5))
+    plt.hist(generatedG, bins=400)
+     
+    plt.axvline(media, 0, color="red", linestyle="-")
+    plt.axvline(media + desvio_padrao, 0, color="red", linestyle="-")
+    plt.axvline(media - desvio_padrao, 0, color="red", linestyle="-")
+    plt.axvline(media + 2*desvio_padrao, 0, color="red", linestyle="-")
+    plt.axvline(media - 2*desvio_padrao, 0, color="red", linestyle="-")
+ 
+    print("Média:", round(media, 2))
+    print("Desvio Padrão:", round(desvio_padrao, 2))
+    print(f"Medida: ({round(media, 2)} +- {round(2*desvio_padrao, 2)})") # Como são muitos experimentos t é aproximadamente 2.
+    print(f"Intervalo: [{round(media - desvio_padrao, 2)}, {round(media + desvio_padrao, 2)}]")
+     
 def monti_carlo_indiMed(G, arrVar, arrIncertezas, quantidade_experimentos):
-	arrVarRandomicos = [0*len(arrVar)]
-	arrResultadoRandomico = [0*quantidade_experimentos]
-	for i in range(quantidade_experimentos):
-		arrVarRandomicos[i] = random(arrVar[i]-arrIncertezas[i], arrVar[i]+arrIncertezas[i])
-		arrResultadoRandomico[i] = G(*arrVarRandomicos)
-	mergeSort(arrResultadoRandomico, 0, len(arrResultadoRandomico))
-	gauss_distribut = gaussiana_creater(arrResultadoRandomico)
-	return gauss_distribut
 
+    # Criação de arrays para os valores gerados
+    arrVarRandomicos = [0]*len(arrVar)
+    arrResultadoRandomico = [0]*quantidade_experimentos
+
+    for j in range(quantidade_experimentos):
+        for i in range(len(arrVar)):
+            arrVarRandomicos[i] = normal(arrVar[i], arrIncertezas[i])
+        arrResultadoRandomico[j] = G(*arrVarRandomicos)
+    return arrResultadoRandomico
+    
 def G(a,b):
 	return a*b
 
-import http.server
-import socketserver
-
-PORT = 8000
-
-Handler = http.server.SimpleHTTPRequestHandler
-
-with socketserver.TCPServer(("", PORT), Handler) as httpd:
-    print(f"Serving at port {PORT}")
-        # Start the server and keep it running until you stop the script
-            httpd.serve_forever()
-
-
 if __name__ == "__main__":
-	
-	arrVar=[25.3, 56.5]
-	arrIncertezasPadrao=[0.6, 0.8]
-	quantidade_experimentos=100
-	gauss = monti_carlo_indiMed(arrVar, arrIncertezasPadrao, quantidade_experimentos)
-	plt.figure(1,2)
-	plt.plot(gauss.keys(), gauss.values())
-    #plt.show()
-    #plt.savefig("monti-carlo-result.png")
-## RESPOSTA: (1429 +- 39)mm
+    arrVar=[25.3, 56.5]
+    arrIncertezasPadrao=[0.6, 0.8]
+    quantidade_experimentos=1000000
+    return_gaussiana(G, arrVar, arrIncertezasPadrao, quantidade_experimentos)
+
+    plt.show()
+        #plt.savefig("monti-carlo-result.png")
+        ## RESPOSTA: (1429 +- 39)mm
