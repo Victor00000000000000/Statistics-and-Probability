@@ -5,11 +5,11 @@ import numpy as np
 from math import trunc, ceil
 
 def return_gaussiana(G, arrVar, arrIncertezas, quantidade_experimentos):
-    generatedG= monti_carlo_indiMed(G, arrVar, arrIncertezasPadrao, quantidade_experimentos)
+    generatedG= monti_carlo_indiMed(G, arrVar, arrIncertezas, quantidade_experimentos)
      
     media = np.mean(generatedG)
     desvio_padrao = np.std(generatedG)
-    xmed = (max(generatedG) + min(generatedG))/2
+    #xmed = (max(generatedG) + min(generatedG))/2
      
     fig = plt.figure(figsize=(6,5))
     plt.hist(generatedG, bins=400)
@@ -24,7 +24,9 @@ def return_gaussiana(G, arrVar, arrIncertezas, quantidade_experimentos):
     print("Desvio Padrão:", round(desvio_padrao, 2))
     print(f"Medida: ({round(media, 2)} +- {round(t_student(quantidade_experimentos-1)*desvio_padrao, 2)})") # Como são muitos experimentos t é aproximadamente 2.
     print(f"Intervalo: [{round(media - desvio_padrao, 2)}, {round(media + desvio_padrao, 2)}]")
-     
+
+    plt.show()
+
 def monti_carlo_indiMed(G, arrVar, arrIncertezas, quantidade_experimentos):
 
     # Criação de arrays para os valores gerados
@@ -56,6 +58,7 @@ def t_student(graus_liberdade):
 def G(a,b):
 	return a*b
 
+'''
 if __name__ == "__main__":
     arrVar=[25.3, 56.5]
     arrIncertezasPadrao=[0.6, 0.8]
@@ -65,3 +68,4 @@ if __name__ == "__main__":
     plt.show()
         #plt.savefig("monti-carlo-result.png")
         ## RESPOSTA: (1429 +- 39)mm
+'''
