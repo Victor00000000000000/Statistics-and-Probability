@@ -1,13 +1,13 @@
 import monteCarlo as mC
-quantidade_experimentos = 10000000
+quantidade_experimentos = 1000000
 
 In = 1654.667
 I300 = 293.800
 I150 = 198.200
 
-UIn = 2.900
-UI300 = 1.785
-UI150 = 1.701
+UIn = 2.878
+UI300 = 1.735
+UI150 = 1.647
 
 def N(In, I300, I150):
     Mp = (I300 - I150)/150
