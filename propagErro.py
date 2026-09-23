@@ -39,4 +39,7 @@ def prop_erro_MedIndireta(arrRB, arrU, G, arrVar):
 
     incertezaExpandidaProp = sqrt(produtoGaxU_a_lamb(mb, mc)**2 + produtoGbxU_b_lamb(ma, mb, mc)**2 + produtoGcxU_c_lamb(ma, mb, mc)**2)
 
-    return [G_lamb(ma, mb, mc), incertezaExpandidaProp]
+    RB = round(G_lamb(ma, mb, mc), 2)
+    U = round(float(incertezaExpandidaProp), 3)
+
+    return [RB, U]
