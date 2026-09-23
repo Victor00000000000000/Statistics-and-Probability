@@ -3,38 +3,40 @@ import matplotlib.pyplot as plt
 import numpy as np
 from numpy import sqrt
 
-In, I300, I150 = smp.symbols('In I300 I150')
+def prop_erro_MedIndireta(arrRB, arrU, G, arrVar):
+    #In, I300, I150 = smp.symbols('In I300 I150')
 
-# Declaração simbólica das funções
-Mp = (I300 - I150)/150
-Mg = ((I300 + I150) - 450*Mp)/2
-N = (In - Mg)/Mp
+    a = arrVar[0]
+    b = arrVar[1]
+    c = arrVar[2]
 
-# Declaração simbólica das derivadas
-N_In = smp.diff(N, In)
-N_I300 = smp.diff(N, I300)
-N_I150 = smp.diff(N, I150)
+    ma = arrRB[0]
+    mb = arrRB[1]
+    mc = arrRB[2]
 
-# Declaração das Incertezas (Valores de hold ainda)
-u_In = 1
-u_I300 = 2
-u_I150 = 3 
+    # Declaração simbólica das funções
+    G_lamb = smp.lambdify([a, b, c], G)
 
-# Declaração Produto (Derivada em relação a v) x (Incerteza Padrão de v)
-produtoNu_In = N_In*u_In
-produtoNu_I300 = N_I300*u_I300
-produtoNu_I150 = N_I150*u_I150
+    # Declaração simbólica das derivadas
+    G_a = smp.diff(G, a)
+    G_b = smp.diff(G, b)
+    G_c = smp.diff(G, c)
 
-# Declaração dos function object de cada função simbólica. É como se a partir de cada função simbólica, fosse criada uma função com o "def".
-produtoNu_In_lamb = smp.lambdify([I150, I300], produtoNu_In)
-produtoNu_I300_lamb = smp.lambdify([I150, I300, In], produtoNu_I300)
-produtoNu_I150_lamb = smp.lambdify([I150, I300, In], produtoNu_I150)
+    # Declaração das Incertezas (Valores de hold ainda)
+    U_a = arrU[0]
+    U_b = arrU[1]
+    U_c = arrU[2]
 
+    # Declaração Produto (Derivada em relação a v) x (Incerteza Padrão de v)
+    produtoGaxU_a = G_a*U_a
+    produtoGbxU_b = G_b*U_b
+    produtoGcxU_c = G_c*U_c
 
-print(produtoNu_In)
-print(produtoNu_I300)
-print(produtoNu_I150)
+    # Declaração dos function object de cada função simbólica. É como se a partir de cada função simbólica, fosse criada uma função com o "def".
+    produtoGaxU_a_lamb = smp.lambdify(produtoGaxU_a.free_symbols, produtoGaxU_a)
+    produtoGbxU_b_lamb = smp.lambdify(produtoGbxU_b.free_symbols, produtoGbxU_b)
+    produtoGcxU_c_lamb = smp.lambdify(produtoGcxU_c.free_symbols, produtoGcxU_c)
 
-print(produtoNu_In_lamb(1, 2))
-print(produtoNu_I300_lamb(1, 2, 1))
-print(produtoNu_I150_lamb(1, 2, 1))
+    incertezaExpandidaProp = sqrt(produtoGaxU_a_lamb(mb, mc)**2 + produtoGbxU_b_lamb(ma, mb, mc)**2 + produtoGcxU_c_lamb(ma, mb, mc)**2)
+
+    return [G_lamb(ma, mb, mc), incertezaExpandidaProp]

@@ -1,4 +1,6 @@
 import monteCarlo as mC
+import sympy as smp
+
 quantidade_experimentos = 1000000
 
 In = 1654.667
