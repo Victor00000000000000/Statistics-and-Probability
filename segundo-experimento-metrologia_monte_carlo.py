@@ -1,8 +1,9 @@
 import monteCarlo as mC
 import sympy as smp
 
-quantidade_experimentos = 1000000
+quantidade_experimentos = 100000
 
+'''
 In = 1654.667
 I300 = 293.800
 I150 = 198.200
@@ -19,8 +20,34 @@ def N(In, I300, I150):
 
 arrVar = [In, I300, I150]
 arrIncertezasExpandida = [UIn, UI300, UI150]
+'''
 
-mC.return_gaussiana(N, arrVar, arrIncertezasExpandida, quantidade_experimentos)
+epsilon = 31.5
+E = 205000
+b = 31.945
+h = 3.1115
+g = 9.80665
+L = 165.04
+x = 5.646
+
+Uepsilon = 1.69864681536019
+UE = 5000
+Ub = 0.242525304659122
+Uh = 0.44587062168526
+Ug = 0.001
+UL = 0.977297948439992
+Ux = 0.210620681226543
+
+def m(epsilon, E, b, h, g, L, x):
+
+    m = (epsilon*E*b*(h**2))/(6*g*(L-x)*1000)
+
+    return m
+
+arrVar = [epsilon, E, b, h, g, L, x]
+arrIncertezasExpandida = [Uepsilon, UE, Ub, Uh, Ug, UL, Ux]
+
+mC.return_gaussiana(m, arrVar, arrIncertezasExpandida, quantidade_experimentos)
 
 '''
 Média: 2436.73

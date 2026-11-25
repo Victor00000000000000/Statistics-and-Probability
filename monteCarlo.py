@@ -24,7 +24,8 @@ def return_gaussiana(G, arrVar, arrIncertezas, quantidade_experimentos):
     print("Desvio Padrão:", round(desvio_padrao, 2))
     print(f"Medida: ({round(media, 2)} +- {round(desvio_padrao, 2)})") # Como são muitos experimentos t é aproximadamente 2.
     print(f"Intervalo: [{round(media - desvio_padrao, 2)}, {round(media + desvio_padrao, 2)}]")
-    plt.show()
+    #plt.show()
+    plt.savefig("MonteCarloNormal.png")
 
 def monti_carlo_indiMed(G, arrVar, arrIncertezas, quantidade_experimentos):
 

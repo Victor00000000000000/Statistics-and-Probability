@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from numpy import sqrt
 
-def prop_erro_MedIndireta(arrRB, arrU, G, arrVar):
+def prop_erro_MedIndireta_1(arrRB, arrU, G, arrVar):
     #In, I300, I150 = smp.symbols('In I300 I150')
 
     a = arrVar[0]
@@ -41,5 +41,35 @@ def prop_erro_MedIndireta(arrRB, arrU, G, arrVar):
 
     RB = round(G_lamb(ma, mb, mc), 2)
     U = round(float(incertezaExpandidaProp), 3)
+
+    return [RB, U]
+
+
+def prop_erro_MedIndireta(arrRB, arrU, G, arrVar, casas_RB=2, casas_U=3):
+    """
+    Propagação de incerteza por derivadas parciais para n variáveis.
+
+    arrRB  : valores medidos de cada variável (mesma ordem de arrVar)
+    arrU   : incertezas de cada variável (mesma ordem de arrVar)
+    G      : expressão simbólica do mensurando
+    arrVar : símbolos sympy das variáveis
+    """
+    if not (len(arrRB) == len(arrU) == len(arrVar)):
+        raise ValueError("arrRB, arrU e arrVar precisam ter o mesmo tamanho.")
+
+    # Função do mensurando
+    G_lamb = smp.lambdify(arrVar, G)
+
+    # Derivadas parciais, lambdificadas sempre com TODAS as variáveis
+    derivadas_lamb = [smp.lambdify(arrVar, smp.diff(G, v)) for v in arrVar]
+
+    # Soma quadrática dos produtos (dG/dv_i) * U_i
+    soma_quadratica = sum(
+        (dG(*arrRB) * U) ** 2
+        for dG, U in zip(derivadas_lamb, arrU)
+    )
+
+    RB = round(float(G_lamb(*arrRB)), casas_RB)
+    U = round(float(sqrt(soma_quadratica)), casas_U)
 
     return [RB, U]
